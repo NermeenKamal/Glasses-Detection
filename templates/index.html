@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model Inference</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        input[type="file"] {
+            padding: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #prediction {
+            margin-top: 20px;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Upload an Image for Prediction</h1>
+
+<form action="/predict" method="POST" enctype="multipart/form-data" id="prediction-form">
+    <label for="model">Choose Model:</label>
+    <select name="model" required>
+        <option value="mlp">MLP</option>
+        <option value="resnet">ResNet50</option>
+        <option value="cnn">CNN</option>
+    </select><br><br>
+
+    <input type="file" name="file" accept="image/*" required>
+    <button type="submit">Predict</button>
+</form>
+
+<div id="prediction"></div>
+
+<script>
+    document.getElementById('prediction-form').onsubmit = function(event) {
+        event.preventDefault();
+
+        var formData = new FormData(this);
+        fetch('/predict', {
+            method: 'POST',
+            body: formData
+        })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('prediction').textContent = 'Prediction: ' + data.prediction;
+            })
+            .catch(error => console.error('Error:', error));
+    };
+</script>
+
+</body>
+</html>
